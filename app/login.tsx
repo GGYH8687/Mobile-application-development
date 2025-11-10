@@ -17,7 +17,8 @@ export default function Login() {
         try {
             const storedPassword = await AsyncStorage.getItem(`@user_${username}`);
             if (storedPassword === password) {
-                // Successfully logged in
+                // Successfully logged in: persist the session so the game knows the user.
+                await AsyncStorage.setItem('@user_logged_in', username);
                 Alert.alert('Login Successful', 'Welcome back!');
                 router.push('/'); // Navigate to the main game screen
             } else {
@@ -27,6 +28,19 @@ export default function Login() {
             console.warn('Error loading credentials:', error);
             Alert.alert('Error', 'An error occurred during login');
         }
+    };
+
+    /**
+     * Continue without logging in.
+     * Clears any logged-in user and returns to the game as a guest.
+     */
+    const handleGuest = async () => {
+        try {
+            await AsyncStorage.removeItem('@user_logged_in');
+        } catch (err) {
+            console.warn('Failed to clear logged in user', err);
+        }
+        router.push('/');
     };
 
     return (
@@ -56,8 +70,8 @@ export default function Login() {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.link}
-                onPress={() => router.push('/')}> // Skip login to play as guest
-      >
+                onPress={handleGuest}
+            >
                 <Text style={styles.linkText}>Continue as Guest</Text>
             </TouchableOpacity>
         </View>

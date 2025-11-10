@@ -30,6 +30,19 @@ export default function Register() {
         }
     };
 
+    /**
+     * Continue without registering or logging in.
+     * Clears any logged-in user and goes straight to the game.
+     */
+    const handleGuest = async () => {
+        try {
+            await AsyncStorage.removeItem('@user_logged_in');
+        } catch (err) {
+            console.warn('Failed to clear logged in user', err);
+        }
+        router.push('/');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Register</Text>
@@ -55,6 +68,12 @@ export default function Register() {
             >
                 <Text style={styles.linkText}>Already have an account? Login</Text>
             </TouchableOpacity>
+        <TouchableOpacity
+            style={styles.link}
+            onPress={handleGuest}
+        >
+            <Text style={styles.linkText}>Continue as Guest</Text>
+        </TouchableOpacity>
         </View>
     );
 }
